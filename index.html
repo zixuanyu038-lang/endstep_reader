@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Endstep · 对局档案</title>
+  <meta name="color-scheme" content="light">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="masthead">
+    <a class="wordmark" href="#" id="home" aria-label="返回档案首页"><svg width="25" height="30" viewBox="0 0 25 30" fill="none" aria-hidden="true"><path d="M3 2h18v26H3zM7 7h10M7 12h10M7 17h6M7 22h10" stroke="currentColor" stroke-width="1.5"/><path d="M1 5v24h18" stroke="currentColor"/></svg><span>ENDSTEP<span class="wordmark-sub">对局档案</span></span></a>
+    <nav><button id="help" class="text-button">阅读说明 <span>↗</span></button><button class="import-button" id="open">导入回放 <span>＋</span></button></nav>
+    <input id="file" type="file" accept=".esreplay,.jsonl,.ndjson" hidden>
+  </header>
+  <main id="landing" class="landing">
+    <div class="landing-copy"><p class="eyebrow">本地工具 / ENDSTEP REPLAY</p><h1>Endstep<br>回放阅读器</h1><p class="intro">按局、回合与阶段阅读对局。<br>查看局面快照，或直接导出原始 JSONL。</p><button class="primary" id="landing-open">选择 .esreplay 文件 <span>↗</span></button><p class="local-note"><span class="local-dot"></span>离线解析 · 无需账号 · 文件留在本机</p></div>
+    <div class="folio" aria-hidden="true"><span class="folio-corner">.ESREPLAY → JSONL</span><div class="card-illustration"><div class="line-card back"></div><div class="line-card middle"></div><div class="line-card front"><span>ENDSTEP REPLAY</span><svg viewBox="0 0 150 150"><circle cx="75" cy="75" r="48"/><circle cx="75" cy="75" r="33"/><path d="M27 75h96M75 27v96M41 41l68 68M41 109l68-68"/><path d="M75 14l7 16-7-3-7 3zM75 136l7-16-7 3-7-3z" class="fill"/></svg><i>回放 · 战报 · 原始记录</i></div></div><div class="folio-bottom"><span>01 — 导入</span><span>02 — 阅读</span><span>03 — 导出</span></div></div>
+    <div class="landing-footer"><span>适用于 Endstep Replay · 格式 v1</span><span>分局阅读 / 局面快照 / 战报导出</span></div>
+  </main>
+  <section id="workspace" hidden>
+    <div class="match-head"><div><p id="match-meta" class="eyebrow"></p><h1 id="match-title"></h1><p id="match-sub" class="match-sub"></p></div><div class="match-score"><span class="score-caption">MATCH RESULT</span><div id="score"></div></div></div>
+    <div class="view-switch" aria-label="阅读方式"><button id="view-report" class="active" aria-pressed="true">中文战报</button><button id="view-jsonl" aria-pressed="false">原始 JSONL</button></div>
+    <div class="toolbar" id="report-toolbar"><div id="games" class="games" aria-label="选择对局"></div><div class="reader-tools"><label class="search"><span aria-hidden="true">⌕</span><input id="search" placeholder="查找牌名、操作…" aria-label="搜索战报"><kbd>/</kbd></label><button id="detail" class="text-button" aria-pressed="false">精简记录</button><div class="export-wrap"><button id="export" class="text-button" aria-expanded="false">导出战报 ↓</button><div id="export-menu" class="export-menu" hidden><button data-export="html">交互战报 .html</button><button data-export="md">中文战报 .md</button><button data-export="txt">纯文本 .txt</button><button data-export="jsonl">原始记录 .jsonl</button><button data-export="json">结构化战报 .json</button></div></div></div></div>
+    <div id="warnings" class="warnings" hidden></div>
+    <div class="reading-grid" id="report-view"><aside class="turn-rail"><div class="rail-heading">回合索引 <span id="turn-count"></span></div><nav id="turns" aria-label="回合导航"></nav><div class="rail-footer">双方各自计数<br><span>原始全局回合号以 T 标注</span></div></aside><article class="reading"><div class="reading-heading"><div><p class="eyebrow" id="turn-kicker"></p><h2 id="turn-title"></h2></div><div class="turn-arrows"><button id="prev" aria-label="上一回合">←</button><button id="next" aria-label="下一回合">→</button></div></div><div id="search-note" class="search-note" hidden></div><div id="events"></div><div class="end-mark"><span></span> END OF RECORD <span></span></div></article><aside class="board"><div class="board-top"><h3>局面笔记</h3><button id="reset-state" class="text-button" hidden>回到回合末 ↶</button></div><p id="snapshot-caption" class="snapshot-caption"></p><div id="board-state"></div><details class="method"><summary>这份记录如何阅读</summary><p>点击事件，可查看在该事件之前最近收到的快照。默认显示本回合末最近快照；网络事件与快照分开发送，时间可能略有间隔。</p><p>未知牌保持未知；移区不直接等同于抓牌或消灭。未来出现的牌不会补进过去的手牌。</p><p>点击已知牌名可查看文件中的英文牌面文字。</p></details></aside></div>
+    <section id="jsonl-view" class="jsonl-view" hidden><div class="jsonl-toolbar"><div><h2>原始 JSONL</h2><p>解压后的原始记录，保留行序与数值，不改写数据。</p></div><button id="save-jsonl" class="import-button">保存 .jsonl ↓</button></div><div class="jsonl-controls"><label>记录类型 <select id="raw-kind" aria-label="筛选原始记录类型"><option value="">全部记录</option><option value="header">文件头</option><option value="chapter">chapter · 对局边界</option><option value="event">event · 游戏事件</option><option value="action">action · 玩家操作</option><option value="key">key · 完整快照</option><option value="diff">diff · 状态补丁</option></select></label><input id="raw-search" placeholder="搜索原始行…" aria-label="搜索原始 JSONL"><span id="raw-count"></span></div><textarea id="raw-text" readonly spellcheck="false" aria-label="原始 JSONL 内容" wrap="off"></textarea><p class="raw-footnote">每行是一个 JSON 对象。筛选只影响预览；保存始终导出完整原始文件。</p></section>
+  </section>
+  <div id="drop" class="drop-overlay" hidden><div><span>↓</span><h2>把回放放在这里</h2><p>.esreplay / .jsonl</p></div></div>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <dialog id="help-dialog"><button class="dialog-close" data-close aria-label="关闭">×</button><h2>阅读说明</h2><p>导入 Endstep 的 .esreplay 文件，即可按局、回合、阶段阅读中文战报。支持拖入文件，也支持未压缩的 JSONL。切换「原始 JSONL」可直接查看、筛选或保存完整原始记录。</p><dl><dt>事件与操作</dt><dd>战报只根据游戏事件生成。玩家点击、自动支付和取消操作不作为已成功执行的事实。</dd><dt>施放与结算</dt><dd>施放不代表结算；离开堆叠不直接代表被反击。触发异能与来源咒语分别记录。</dd><dt>隐藏信息</dt><dd>只呈现录制视角能看到的信息。对手的未知手牌不会被补全；牌库移入手牌不一律叫作抓牌。</dd><dt>语言与兼容</dt><dd>牌名使用文件中的英文名；常见操作翻译为中文。无法可靠翻译的效应保留原文，未知事件也会保留。当前验证版本为 Endstep Replay v1。</dd><dt>快捷键</dt><dd>← → 切换回合，/ 搜索。导出的 HTML 可离线打开，包含整场战报及已记录的手牌信息。</dd></dl><p class="source-note">术语参考 <a href="https://magic.wizards.com/en/rules" target="_blank" rel="noreferrer">万智牌官方规则 ↗</a>（121.1、113.7a、701.6）。本工具整理记录，不模拟规则或评判最优操作。</p></dialog>
+  <dialog id="card-dialog"><button class="dialog-close" data-close aria-label="关闭">×</button><p class="eyebrow">CARD REFERENCE · 回放牌面</p><h2 id="card-title"></h2><p id="card-meta"></p><div id="card-oracle"></div><p class="source-note">文字来自此回放文件，可能与最新 Oracle 不同。此页仅为牌面参考。</p></dialog>
+  <script src="replay.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
